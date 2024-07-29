@@ -1,69 +1,103 @@
-import React, { MouseEventHandler, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select, {
   components,
   ControlProps,
   Props,
   StylesConfig,
 } from "react-select";
-import { ColourOption, colourOptions, stateOptions } from "./../ultils/data";
+import { CurrencyOption, fetchCurrencyOption } from "./../utils/data";
 import stylesCSS from "./../assets/css/Select.module.css";
+import CustomOption from "./CustomSelectOption";
 
-const EMOJIS = ["👍", "🤙", "👏", "👌", "🙌", "✌️", "🖖", "👐"];
-
-const Control = ({ children, ...props }: ControlProps<ColourOption, false>) => {
-  const { emoji, onEmojiClick } = props.selectProps;
+const Control = ({
+  children,
+  ...props
+}: ControlProps<CurrencyOption, false>) => {
+  const { image, onImgClick } = props.selectProps;
   const style = { cursor: "pointer" };
 
   return (
     <components.Control {...props}>
-      <span onMouseDown={onEmojiClick} style={style}>
-        {emoji}
-      </span>
+      <img
+        onMouseDown={onImgClick}
+        src={image}
+        alt="Currency"
+        style={style}
+        width={20}
+        height={20}
+      />
       {children}
     </components.Control>
   );
 };
 
-interface CustomSelectPropsType extends Props<ColourOption> {
+interface CustomSelectPropsType extends Props<CurrencyOption> {
   id?: string;
   label?: string;
+  onChange: (selectedOption: CurrencyOption | null) => void;
 }
 
 const CustomSelectProps: React.FC<CustomSelectPropsType> = (props) => {
-  const [clickCount, setClickCount] = useState(0);
+  const [selectedImg, setSelectedImg] = useState<string>(
+    "./../src/assets/tokens/USD.svg"
+  );
+  const [currencyOptions, setCurrencyOptions] = useState<CurrencyOption[]>([]);
+  const [defaultOption, setDefaultOption] = useState<CurrencyOption | null>(
+    null
+  );
 
-  const onClick: MouseEventHandler<HTMLSpanElement> = (e) => {
-    setClickCount(clickCount + 1);
-    e.preventDefault();
-    e.stopPropagation();
-  };
+  useEffect(() => {
+    const getCurrencyOption = async () => {
+      const options = await fetchCurrencyOption();
 
-  const styles: StylesConfig<ColourOption, false> = {
+      setCurrencyOptions(options);
+
+      const defaultCurrency =
+        options.find((option) => option.label === "USD") || null;
+
+      setDefaultOption(defaultCurrency);
+      if (defaultCurrency) {
+        setSelectedImg(defaultCurrency.img);
+      }
+    };
+
+    getCurrencyOption();
+  }, []);
+
+  const styles: StylesConfig<CurrencyOption, false> = {
     control: (css) => ({
       ...css,
       paddingLeft: "1rem",
       boxShadow: "rgba(0, 17, 51, 0.05) 0px 3px 15px",
       border: "rgba(221, 222, 221) 1px solid",
       borderRadius: "6px",
-      cursor: "pointer"
+      cursor: "pointer",
+      fontSize: "18px",
+      minHeight: "47px",
     }),
   };
 
-  const emoji = EMOJIS[clickCount % EMOJIS.length];
+  const onChangeSelect = (selectedOption: CurrencyOption | null) => {
+    if (selectedOption) {
+      setSelectedImg(selectedOption.img);
+      props.onChange(selectedOption);
+    }
+  };
 
   return (
     <div className={stylesCSS.selectContainer}>
       <label htmlFor={props.id}>{props.label}</label>
       <Select
         {...props}
-        emoji={emoji}
-        onEmojiClick={onClick}
-        components={{ Control }}
+        image={selectedImg}
+        onImgClick={() => {}}
+        components={{ Control, Option: CustomOption }}
         isSearchable
-        name="emoji"
-        options={colourOptions}
+        options={currencyOptions}
         styles={styles}
         id={props.id}
+        onChange={onChangeSelect}
+        defaultValue={defaultOption}
       />
     </div>
   );

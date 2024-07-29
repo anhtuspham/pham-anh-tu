@@ -1,7 +1,15 @@
-.selectContainer{
-    text-align: left;
+.selectContainer {
+  text-align: left;
+  min-width: 280px;
 }
 
-.selectContainer label{
-    font-weight: 600;
+.selectContainer label {
+  font-weight: 600;
+}
+
+@media (max-width: 1280px) {
+  .selectContainer {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 }

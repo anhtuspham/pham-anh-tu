@@ -1,18 +1,25 @@
 import styles from "./../assets/css/ViewResult.module.css";
 
-export default function ViewResult({ inputValue, fromCurrency, toCurrency }) {
+export default function ViewResult({
+  inputValue,
+  fromCurrency,
+  toCurrency,
+  result,
+}) {
   return (
     <>
       <p className={styles.textValue}>
-        {inputValue} {fromCurrency} = 
+        {inputValue} {fromCurrency} =
       </p>
-      <p className={styles.textToCurrency}>1.0932039203 {toCurrency}</p>
+      <p className={styles.textToCurrency}>
+        {result} {toCurrency}
+      </p>
       <div>
         <p>
-          1 {fromCurrency} = 1.1111 {toCurrency}
+          1 {fromCurrency} = {(result / inputValue).toFixed(4)} {toCurrency}
         </p>
         <p>
-          1 {toCurrency} = 0.1111 {toCurrency}
+          1 {toCurrency} = {(inputValue / result).toFixed(4)} {fromCurrency}
         </p>
       </div>
     </>

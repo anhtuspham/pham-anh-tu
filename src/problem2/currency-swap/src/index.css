@@ -31,22 +31,13 @@ body {
   justify-content: center;
   min-width: 360px;
   min-height: 100vh;
+  background-image: url("/src/assets/img/theme-bg-green.svg");
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
-
-
-/* button:hover {
-  background-color: red;
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-} */
 
 @media (prefers-color-scheme: light) {
   :root {
